@@ -33,14 +33,23 @@
                 [formGroup]="signUpForm"
                 #signUpNgForm="ngForm">
 
+                <!-- Gender field -->
+                <div class="ml-9 w-full flex items-center">
+                    <mat-label>I am a: </mat-label>
+                    <mat-radio-group formControlName="gender">
+                        <mat-radio-button value="male">Male</mat-radio-button>
+                        <mat-radio-button value="female">Female</mat-radio-button>
+                    </mat-radio-group>
+                </div>
+                
                 <!-- Name field -->
                 <mat-form-field class="w-full">
                     <mat-label>Full name</mat-label>
                     <input
-                        id="name"
+                        id="fullName"
                         matInput
-                        [formControlName]="'name'">
-                    <mat-error *ngIf="signUpForm.get('name').hasError('required')">
+                        [formControlName]="'fullName'">
+                    <mat-error *ngIf="signUpForm.get('fullName').hasError('required')">
                         Full name is required
                     </mat-error>
                 </mat-form-field>
@@ -83,9 +92,17 @@
                             *ngIf="passwordField.type === 'text'"
                             [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
                     </button>
-                    <mat-error>
+                    <mat-error *ngIf="signUpForm.get('password').hasError('required')">
                         Password is required
                     </mat-error>
+                   
+                    <mat-error *ngIf="signUpForm.get('password').hasError('minlength')">
+                        Password must be at least {{ signUpForm.get('password').hasError('minlength').requiredLength }} characters
+                    </mat-error>
+                    <mat-error *ngIf="signUpForm.get('password').hasError('maxlength')">
+                        Password must be at most {{ signUpForm.get('password').hasError('maxlength').requiredLength }} characters
+                    </mat-error>
+                    
                 </mat-form-field>
 
                 <!-- Company field -->
@@ -160,11 +177,13 @@
         <div class="z-10 relative w-full max-w-2xl">
             <div class="text-7xl font-bold leading-none text-gray-100">
                 <div>Welcome to</div>
-                <div>our community</div>
+                <div>Innovate Sync Community</div>
             </div>
             <div class="mt-6 text-lg tracking-tight leading-6 text-gray-400">
-                Fuse helps developers to build organized and well coded dashboards full of beautiful and rich modules.
-                Join us and start building your application today.
+                Experience project and task management like never before with Innovate Sync, 
+                Our platform redefines project coordination, providing real-time updates, interactive Gantt charts, and collaborative task creation.
+                Join us now and elevate your project management experience with Innovate Sync - where innovation meets synchronization.
+            
             </div>
             <div class="flex items-center mt-8">
                 <div class="flex flex-0 items-center -space-x-1.5">

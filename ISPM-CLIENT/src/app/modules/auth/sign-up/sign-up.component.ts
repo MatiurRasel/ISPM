@@ -1,6 +1,6 @@
 import { NgIf } from '@angular/common';
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { FormsModule, NgForm, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormsModule, NgForm, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, ValidatorFn, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -11,6 +11,7 @@ import { Router, RouterLink } from '@angular/router';
 import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
+import { MatRadioModule } from '@angular/material/radio';
 
 @Component({
     selector     : 'auth-sign-up',
@@ -18,7 +19,7 @@ import { AuthService } from 'app/core/auth/auth.service';
     encapsulation: ViewEncapsulation.None,
     animations   : fuseAnimations,
     standalone   : true,
-    imports      : [RouterLink, NgIf, FuseAlertComponent, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatCheckboxModule, MatProgressSpinnerModule],
+    imports      : [RouterLink, NgIf, FuseAlertComponent, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatCheckboxModule, MatProgressSpinnerModule,MatRadioModule],
 })
 export class AuthSignUpComponent implements OnInit
 {
@@ -53,13 +54,30 @@ export class AuthSignUpComponent implements OnInit
     {
         // Create the form
         this.signUpForm = this._formBuilder.group({
-                name      : ['', Validators.required],
-                email     : ['', [Validators.required, Validators.email]],
-                password  : ['', Validators.required],
-                company   : [''],
-                agreements: ['', Validators.requiredTrue],
+                gender      : ['male'],
+                fullName    : ['', Validators.required],
+                userName    : ['', Validators.required],
+                dateOfBirth : ['',Validators.required],
+                city        : [''],
+                country     : [''],
+                email       : ['', [Validators.required, Validators.email]],
+                password    : ['', Validators.required,Validators.minLength(5),Validators.maxLength(15)],
+                confirmPassword: ['',[Validators.required ,this.matchValues('password')]],
+                company     : [''],
+                agreements  : ['', Validators.requiredTrue],
             },
         );
+
+        this.signUpForm.controls['password'].valueChanges.subscribe({
+            next: () => this.signUpForm.controls['confirmPassword'].updateValueAndValidity()
+        })
+    }
+    
+    matchValues(matchTo: string):ValidatorFn{
+        return(control:AbstractControl) => {
+          return control.value === control.parent?.get(matchTo)?.value
+          ? null : {notMatching: true}
+        }
     }
 
     // -----------------------------------------------------------------------------------------------------
