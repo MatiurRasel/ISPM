@@ -1,6 +1,6 @@
 import { NgIf } from '@angular/common';
 import { Component, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
-import { AbstractControl, FormsModule, NgForm, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, ValidatorFn, Validators } from '@angular/forms';
+import { AbstractControl, FormsModule, NgForm, ReactiveFormsModule, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -13,6 +13,44 @@ import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
 import { MatRadioModule } from '@angular/material/radio';
 
+// Uppercase letter validator
+function uppercaseValidator(control: AbstractControl): ValidationErrors | null {
+    const hasUppercase = /[A-Z]/.test(control.value);
+    return hasUppercase ? null : { uppercase: true };
+}
+
+// Lowercase letter validator
+function lowercaseValidator(control: AbstractControl): ValidationErrors | null {
+    const hasLowercase = /[a-z]/.test(control.value);
+    return hasLowercase ? null : { lowercase: true };
+}
+
+// Symbol validator
+function symbolValidator(control: AbstractControl): ValidationErrors | null {
+    const hasSymbol = /[!@#$%^&*(),.?":{}|<>]/.test(control.value);
+    return hasSymbol ? null : { symbol: true };
+}
+
+// Number validator
+function numberValidator(control: AbstractControl): ValidationErrors | null {
+    const hasNumber = /\d/.test(control.value);
+    return hasNumber ? null : { number: true };
+}
+
+
+function minLengthValidator(control: AbstractControl): Promise<ValidationErrors | null> {
+    const minLength = 5;
+    const value = control.value || '';
+    return Promise.resolve(value.length >= minLength ? null : { minlength: { requiredLength: minLength, actualLength: value.length } });
+}
+
+function maxLengthValidator(control: AbstractControl): Promise<ValidationErrors | null> {
+    const maxLength = 15;
+    const value = control.value || '';
+    return Promise.resolve(value.length <= maxLength ? null : { maxlength: { requiredLength: maxLength, actualLength: value.length } });
+}
+
+
 @Component({
     selector     : 'auth-sign-up',
     templateUrl  : './sign-up.component.html',
@@ -21,6 +59,8 @@ import { MatRadioModule } from '@angular/material/radio';
     standalone   : true,
     imports      : [RouterLink, NgIf, FuseAlertComponent, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatCheckboxModule, MatProgressSpinnerModule,MatRadioModule],
 })
+
+
 export class AuthSignUpComponent implements OnInit
 {
     @ViewChild('signUpNgForm') signUpNgForm: NgForm;
@@ -61,7 +101,20 @@ export class AuthSignUpComponent implements OnInit
                 city        : [''],
                 country     : [''],
                 email       : ['', [Validators.required, Validators.email]],
-                password    : ['', Validators.required,Validators.minLength(5),Validators.maxLength(15)],
+                password: [
+                    '',
+                    [
+                        Validators.required,
+                        Validators.minLength(5),
+                        Validators.maxLength(15),
+                        uppercaseValidator,
+                        lowercaseValidator,
+                        symbolValidator,
+                        numberValidator,
+                    ],
+                    minLengthValidator, // Add this line
+                    maxLengthValidator  // Add this line
+                ],
                 confirmPassword: ['',[Validators.required ,this.matchValues('password')]],
                 company     : [''],
                 agreements  : ['', Validators.requiredTrue],
@@ -72,6 +125,7 @@ export class AuthSignUpComponent implements OnInit
             next: () => this.signUpForm.controls['confirmPassword'].updateValueAndValidity()
         })
     }
+    
     
     matchValues(matchTo: string):ValidatorFn{
         return(control:AbstractControl) => {

@@ -92,15 +92,33 @@
                             *ngIf="passwordField.type === 'text'"
                             [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
                     </button>
+                    
                     <mat-error *ngIf="signUpForm.get('password').hasError('required')">
                         Password is required
                     </mat-error>
-                   
-                    <mat-error *ngIf="signUpForm.get('password').hasError('minlength')">
-                        Password must be at least {{ signUpForm.get('password').hasError('minlength').requiredLength }} characters
+                    
+                    <mat-error *ngIf="signUpForm.get('password').hasError('minlength') && signUpForm.get('password').touched">
+                        Password must be at least {{ signUpForm.get('password').getError('minlength').requiredLength }} characters
                     </mat-error>
-                    <mat-error *ngIf="signUpForm.get('password').hasError('maxlength')">
-                        Password must be at most {{ signUpForm.get('password').hasError('maxlength').requiredLength }} characters
+                    
+                    <mat-error *ngIf="signUpForm.get('password').hasError('maxlength') && signUpForm.get('password').touched">
+                        Password must be at most {{ signUpForm.get('password').getError('maxlength').requiredLength }} characters
+                    </mat-error>
+                    
+                    <mat-error *ngIf="signUpForm.get('password').hasError('uppercase') && signUpForm.get('password').touched">
+                        Password must contain at least one uppercase letter
+                    </mat-error>
+                    
+                    <mat-error *ngIf="signUpForm.get('password').hasError('lowercase') && signUpForm.get('password').touched">
+                        Password must contain at least one lowercase letter
+                    </mat-error>
+                    
+                    <mat-error *ngIf="signUpForm.get('password').hasError('symbol') && signUpForm.get('password').touched">
+                        Password must contain at least one symbol
+                    </mat-error>
+                    
+                    <mat-error *ngIf="signUpForm.get('password').hasError('number') && signUpForm.get('password').touched">
+                        Password must contain at least one number
                     </mat-error>
                     
                 </mat-form-field>
