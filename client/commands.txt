@@ -1,0 +1,150 @@
+ng new client
+cd client
+code .
+
+ng g c _components/home --skip-tests
+ng g c _components/dashboard --skip-tests
+ng g c _components/nav --skip-tests
+
+ng g c _components/users/user-edit --skip-tests
+ng g c _components/users/user-detail --skip-tests
+ng g c _components/users/photo-editor --skip-tests
+
+ng g s _services/account --skip-tests
+
+ng g d _directives/has-role --skip-tests
+
+ng g m _modules/shared --flat
+
+ng g g _guards/auth --skip-tests
+ng g g _guards/admin --skip-tests
+ng g g _guards/prevent-unsaved-changes --skip-tests
+
+ng g c _errors/not-found --skip-tests
+ng g c _errors/server-error --skip-tests
+ng g c _errors/test-error --skip-tests
+
+npm install ngx-toastr --save --legacy-peer-deps
+npm install bootswatch --legacy-peer-deps
+npm install @angular/animations --save --legacy-peer-deps
+npm install @kolkov/ngx-gallery --legacy-peer-deps
+npm install ngx-spinner --legacy-peer-deps
+npm install ng2-file-upload@next --legacy-peer-deps
+npm install ngx-bootstrap --save --legacy-peer-deps
+npm install font-awesome  --legacy-peer-deps
+npm install ngx-timeago  --legacy-peer-deps
+
+
+on angular.json 
+"Serve"
+->
+"options": {
+            "sslCert": "./ssl/server.crt",
+            "sslKey": "./ssl/server.key",
+            "ssl": true
+          },
+
+
+Install Command For Tailwind -> 
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init
+
+--If src folder available
+npx tailwindcss -i ./src/styles.css -o ./src/output.css --watch
+Or create scope in scripts in package.json
+  "scripts": {
+    "build": "tailwindcss -i ./src/styles.css -o ./css/style.css",
+    "watch": "tailwindcss -i ./src/styles.css -o ./css/style.css --watch"
+  },
+  build for once watch for keep compiling.
+
+
+
+ng g c _forms/text-input --skip-tests
+ng g c _forms/date-picker --skip-tests
+ng g c _forms/date-picker-alt --skip-tests
+ng update @angular/cli@latest --force
+
+npm install flatpickr  --legacy-peer-deps
+npm install --save @ng-select/ng-select --legacy-peer-deps
+npm install ng-multiselect-dropdown --legacy-peer-deps
+
+ng g c landing/landing-main --skip-tests
+
+
+ng g c landing/nav --skip-tests
+ng g c landing/hero --skip-tests
+ng g c landing/shorten --skip-tests
+ng g c landing/stats --skip-tests
+ng g c landing/features --skip-tests
+ng g c landing/cta --skip-tests
+ng g c landing/footer --skip-tests
+
+--text-input
+
+import { Component, Input, Self } from '@angular/core';
+import { ControlValueAccessor, FormControl, NgControl } from '@angular/forms';
+
+@Component({
+  selector: 'DTI',
+  template: ` 
+  <div class="mb-4 md:flex md:items-center">
+    <input
+        type="{{ type }}"
+        [class.is-invalid]="control.touched && control.invalid"
+        class="form-input w-full md:w-64 px-4 py-2 leading-tight focus:outline-none focus:border-blue-500 border rounded-md"
+        [formControl]="control"
+        placeholder="{{ label }}"
+    >
+
+    <div class="invalid-feedback mt-2 md:ml-4" *ngIf="control.errors?.['required']">
+        Please enter a {{ label }}
+    </div>
+    <div class="invalid-feedback mt-2 md:ml-4" *ngIf="control.errors?.['minlength']">
+        {{ label }} must be at least {{ control.errors?.['minlength'].requiredLength }} characters
+    </div>
+    <div class="invalid-feedback mt-2 md:ml-4" *ngIf="control.errors?.['maxlength']">
+      {{ label }} must be at most {{ control.errors?.['maxlength'].requiredLength }} characters
+    </div>
+    <div class="invalid-feedback mt-2 md:ml-4" *ngIf="control.errors?.['notMatching']">
+      Passwords do not match
+    </div>
+  </div>
+  `,
+})
+export class TextInputComponent implements ControlValueAccessor {
+  @Input() label = '';
+  @Input() type = 'text';
+
+  constructor(@Self() public ngControl: NgControl) {
+    this.ngControl.valueAccessor = this;
+  }
+  
+  writeValue(obj: any): void {
+    //throw new Error('Method not implemented.');
+    //this.control.setValue(obj); // Set the value of the underlying form control
+  }
+  registerOnChange(fn: any): void {
+    //throw new Error('Method not implemented.');
+    //this.control.valueChanges.subscribe(fn); // Notify the parent form about changes
+  }
+  registerOnTouched(fn: any): void {
+    //throw new Error('Method not implemented.');
+    //this.control.markAsTouched(); // Mark the control as touched
+    //fn(); // Notify the parent form about being touched
+  }
+  setDisabledState?(isDisabled: boolean): void {
+    //throw new Error('Method not implemented.');
+    // if (isdisabled) {
+    //  this.control.disable(); // disable the form control
+    // } else {
+    //  this.control.enable(); // enable the form control
+    // }
+  }
+
+  get control(): FormControl {
+    return this.ngControl.control as FormControl
+  }
+
+}
+

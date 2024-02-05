@@ -1,0 +1,56 @@
+[
+    {
+    "UserName": "matiur",
+    "DateOfBirth": "1995-12-26",
+    "Created": "2020-05-07",
+    "LastActive": "2020-06-06",
+    "Gender": "male",
+    "City": "Dhaka",
+    "Country": "Bangladesh"
+    },
+    {
+        "UserName": "rasel",
+        "DateOfBirth": "1995-12-26",
+        "Created": "2020-05-07",
+        "LastActive": "2020-06-06",
+        "Gender": "male",
+        "City": "Dhaka",
+        "Country": "Bangladesh"
+    },
+    {
+        "UserName": "arif",
+        "DateOfBirth": "1995-12-26",
+        "Created": "2020-05-07",
+        "LastActive": "2020-06-06",
+        "Gender": "male",
+        "City": "Dhaka",
+        "Country": "Bangladesh"
+    },
+    {
+        "UserName": "sami",
+        "DateOfBirth": "1995-12-26",
+        "Created": "2020-05-07",
+        "LastActive": "2020-06-06",
+        "Gender": "male",
+        "City": "Dhaka",
+        "Country": "Bangladesh"
+    },
+    {
+        "UserName": "masbah",
+        "DateOfBirth": "1995-12-26",
+        "Created": "2020-05-07",
+        "LastActive": "2020-06-06",
+        "Gender": "male",
+        "City": "Dhaka",
+        "Country": "Bangladesh"
+    },
+    {
+        "UserName": "milon",
+        "DateOfBirth": "1995-12-26",
+        "Created": "2020-05-07",
+        "LastActive": "2020-06-06",
+        "Gender": "male",
+        "City": "Dhaka",
+        "Country": "Bangladesh"
+    }
+]
