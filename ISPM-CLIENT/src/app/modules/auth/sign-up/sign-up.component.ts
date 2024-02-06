@@ -127,6 +127,40 @@ export class AuthSignUpComponent implements OnInit
     }
     
     
+    getPasswordErrorMessage(): string {
+        const passwordControl = this.signUpForm.get('password');
+      
+        if (passwordControl.hasError('required')) {
+          return 'Password is required';
+        }
+      
+        if (passwordControl.hasError('minlength')) {
+          return `Password must be at least ${passwordControl.getError('minlength').requiredLength} characters`;
+        }
+      
+        if (passwordControl.hasError('maxlength')) {
+          return `Password must be at most ${passwordControl.getError('maxlength').requiredLength} characters`;
+        }
+      
+        if (passwordControl.hasError('uppercase')) {
+          return 'Password must contain at least one uppercase letter';
+        }
+      
+        if (passwordControl.hasError('lowercase')) {
+          return 'Password must contain at least one lowercase letter';
+        }
+      
+        if (passwordControl.hasError('symbol')) {
+          return 'Password must contain at least one symbol';
+        }
+      
+        if (passwordControl.hasError('number')) {
+          return 'Password must contain at least one number';
+        }
+      
+        return '';
+      }
+
     matchValues(matchTo: string):ValidatorFn{
         return(control:AbstractControl) => {
           return control.value === control.parent?.get(matchTo)?.value
@@ -143,6 +177,8 @@ export class AuthSignUpComponent implements OnInit
      */
     signUp(): void
     {
+        // Mark all form controls as touched to trigger error messages
+        this.signUpForm.markAllAsTouched();
         // Do nothing if the form is invalid
         if ( this.signUpForm.invalid )
         {

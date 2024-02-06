@@ -34,7 +34,7 @@
                 #signUpNgForm="ngForm">
 
                 <!-- Gender field -->
-                <div class="ml-9 w-full flex items-center">
+                <div class="w-full">
                     <mat-label>I am a: </mat-label>
                     <mat-radio-group formControlName="gender">
                         <mat-radio-button value="male">Male</mat-radio-button>
@@ -93,33 +93,10 @@
                             [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
                     </button>
                     
-                    <mat-error *ngIf="signUpForm.get('password').hasError('required')">
-                        Password is required
-                    </mat-error>
-                    
-                    <mat-error *ngIf="signUpForm.get('password').hasError('minlength') && signUpForm.get('password').touched">
-                        Password must be at least {{ signUpForm.get('password').getError('minlength').requiredLength }} characters
-                    </mat-error>
-                    
-                    <mat-error *ngIf="signUpForm.get('password').hasError('maxlength') && signUpForm.get('password').touched">
-                        Password must be at most {{ signUpForm.get('password').getError('maxlength').requiredLength }} characters
-                    </mat-error>
-                    
-                    <mat-error *ngIf="signUpForm.get('password').hasError('uppercase') && signUpForm.get('password').touched">
-                        Password must contain at least one uppercase letter
-                    </mat-error>
-                    
-                    <mat-error *ngIf="signUpForm.get('password').hasError('lowercase') && signUpForm.get('password').touched">
-                        Password must contain at least one lowercase letter
-                    </mat-error>
-                    
-                    <mat-error *ngIf="signUpForm.get('password').hasError('symbol') && signUpForm.get('password').touched">
-                        Password must contain at least one symbol
-                    </mat-error>
-                    
-                    <mat-error *ngIf="signUpForm.get('password').hasError('number') && signUpForm.get('password').touched">
-                        Password must contain at least one number
-                    </mat-error>
+                    <mat-error *ngIf="signUpForm.get('password').touched && signUpForm.get('password').invalid">
+                        {{ getPasswordErrorMessage() }}
+                      </mat-error>
+                      
                     
                 </mat-form-field>
 
