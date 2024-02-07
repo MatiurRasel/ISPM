@@ -100,7 +100,12 @@ export class AuthSignUpComponent implements OnInit
                 dateOfBirth : ['',Validators.required],
                 city        : [''],
                 country     : [''],
-                email       : ['', [Validators.required, Validators.email]],
+                email       : ['', 
+                    [
+                        Validators.required, 
+                        Validators.email
+                    ]
+                ],
                 password: [
                     '',
                     [
@@ -126,6 +131,18 @@ export class AuthSignUpComponent implements OnInit
         })
     }
     
+    getEmailErrorMessage(): string {
+        const emailControl = this.signUpForm.get('email');
+
+        if (emailControl.hasError('required')) {
+            return 'Email address is required';
+        }
+
+        if (emailControl.hasError('email')) {
+            return 'Please enter a valid email address';
+        }
+        
+    }
     
     getPasswordErrorMessage(): string {
         const passwordControl = this.signUpForm.get('password');
