@@ -143,8 +143,9 @@ export class AuthService
      *
      * @param user
      */
-    signUp(user: { name: string; email: string; password: string; company: string }): Observable<any>
+    signUp(user: { gender: string; fullName: string,userName: string, email: string; password: string }): Observable<any>
     {
+        debugger
         return this._httpClient.post('api/auth/sign-up', user);
     }
 

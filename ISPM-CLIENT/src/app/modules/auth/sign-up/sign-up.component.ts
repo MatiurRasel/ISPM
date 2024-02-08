@@ -94,12 +94,12 @@ export class AuthSignUpComponent implements OnInit
     {
         // Create the form
         this.signUpForm = this._formBuilder.group({
-                gender      : ['male'],
+                gender      : ['M'],
                 fullName    : ['', Validators.required],
                 userName    : ['', Validators.required],
-                dateOfBirth : ['',Validators.required],
-                city        : [''],
-                country     : [''],
+                //dateOfBirth : ['',Validators.required],
+                // city        : [''],
+                // country     : [''],
                 email       : ['', 
                     [
                         Validators.required, 
@@ -120,8 +120,13 @@ export class AuthSignUpComponent implements OnInit
                     minLengthValidator, // Add this line
                     maxLengthValidator  // Add this line
                 ],
-                confirmPassword: ['',[Validators.required ,this.matchValues('password')]],
-                company     : [''],
+                confirmPassword: [
+                    '',
+                    [
+                        Validators.required,
+                        this.matchValues('password')]],
+                        
+                //company     : [''],
                 agreements  : ['', Validators.requiredTrue],
             },
         );
@@ -176,8 +181,24 @@ export class AuthSignUpComponent implements OnInit
         }
       
         return '';
-      }
+    }
 
+    getConfirmPasswordErrorMessage(): string {
+        const confirmPasswordControl = this.signUpForm.get('confirmPassword');
+    
+        if (confirmPasswordControl.hasError('required')) {
+            return 'Confirm Password is required';
+        }
+    
+        if (confirmPasswordControl.hasError('notMatching')) {
+            return 'Passwords do not match';
+        }
+    
+        // You can add more conditions based on your specific requirements for Confirm Password
+    
+        return '';
+    }
+    
     matchValues(matchTo: string):ValidatorFn{
         return(control:AbstractControl) => {
           return control.value === control.parent?.get(matchTo)?.value
@@ -194,6 +215,7 @@ export class AuthSignUpComponent implements OnInit
      */
     signUp(): void
     {
+        debugger
         // Mark all form controls as touched to trigger error messages
         this.signUpForm.markAllAsTouched();
         // Do nothing if the form is invalid

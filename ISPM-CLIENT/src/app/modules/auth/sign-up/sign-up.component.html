@@ -32,31 +32,44 @@
                 class="mt-8"
                 [formGroup]="signUpForm"
                 #signUpNgForm="ngForm">
-
+                    
                 <!-- Gender field -->
                 <div class="w-full">
                     <mat-label>I am a: </mat-label>
                     <mat-radio-group formControlName="gender">
-                        <mat-radio-button value="male">Male</mat-radio-button>
-                        <mat-radio-button value="female">Female</mat-radio-button>
+                        <mat-radio-button value="M">Male</mat-radio-button>
+                        <mat-radio-button value="F">Female</mat-radio-button>
                     </mat-radio-group>
                 </div>
                 
-                <!-- Name field -->
+                <!--Full Name field -->
                 <mat-form-field class="w-full">
-                    <mat-label>Full name</mat-label>
+                    <mat-label>Full Name</mat-label>
                     <input
                         id="fullName"
                         matInput
                         [formControlName]="'fullName'">
                     <mat-error *ngIf="signUpForm.get('fullName').hasError('required')">
-                        Full name is required
+                        Full Name is required
                     </mat-error>
                 </mat-form-field>
 
+                <!--User Name field -->
+                <mat-form-field class="w-full">
+                    <mat-label>User Name</mat-label>
+                    <input
+                        id="userName"
+                        matInput
+                        [formControlName]="'userName'">
+                    <mat-error *ngIf="signUpForm.get('userName').hasError('required')">
+                        User Name is required
+                    </mat-error>
+                </mat-form-field>
+
+
                 <!-- Email field -->
                 <mat-form-field class="w-full">
-                    <mat-label>Email address</mat-label>
+                    <mat-label>Email Address</mat-label>
                     <input
                         id="email"
                         matInput
@@ -97,14 +110,38 @@
                     
                 </mat-form-field>
 
-                <!-- Company field -->
+                <!-- Confirm Password field -->
                 <mat-form-field class="w-full">
-                    <mat-label>Company</mat-label>
+                    <mat-label>Confirm Password</mat-label>
                     <input
-                        id="company-confirm"
+                        id="confirmPassword"
                         matInput
-                        [formControlName]="'company'">
+                        type="password"
+                        [formControlName]="'confirmPassword'"
+                        #confirmPasswordField>
+                    <button
+                        mat-icon-button
+                        type="button"
+                        (click)="passwordField.type === 'password' ? passwordField.type = 'text' : passwordField.type = 'password'"
+                        matSuffix>
+                        <mat-icon
+                            class="icon-size-5"
+                            *ngIf="passwordField.type === 'password'"
+                            [svgIcon]="'heroicons_solid:eye'"></mat-icon>
+                        <mat-icon
+                            class="icon-size-5"
+                            *ngIf="passwordField.type === 'text'"
+                            [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
+                    </button>
+                    
+                    <mat-error *ngIf="signUpForm.get('confirmPassword').touched && signUpForm.get('confirmPassword').invalid">
+                        {{ getConfirmPasswordErrorMessage() }}
+                      </mat-error>
+                      
+                    
                 </mat-form-field>
+
+                
 
                 <!-- ToS and PP -->
                 <div class="inline-flex items-end w-full mt-1.5">
@@ -130,7 +167,7 @@
                     class="fuse-mat-button-large w-full mt-6"
                     mat-flat-button
                     [color]="'primary'"
-                    [disabled]="signUpForm.disabled"
+                    [disabled]="signUpForm.disabled || signUpForm.invalid"
                     (click)="signUp()">
                     <span *ngIf="!signUpForm.disabled">
                         Create your free account
