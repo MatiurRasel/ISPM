@@ -1,0 +1,48 @@
+::> The .eslintrc.json file is a configuration file for ESLint, which is a popular JavaScript and TypeScript linting tool. ESLint helps developers find and fix problems in their code by enforcing coding standards and identifying common errors.
+::> In the .eslintrc.json file, you can specify various rules and configurations for ESLint to follow when analyzing your code. These rules cover areas such as code style, syntax errors, and best practices. ESLint can be customized based on your project's specific requirements.
+
+::> Sample Structure ::
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true
+  },
+  "extends": "eslint:recommended",
+  "parserOptions": {
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "rules": {
+    "indent": ["error", 2],
+    "linebreak-style": ["error", "unix"],
+    "quotes": ["error", "single"],
+    "semi": ["error", "always"]
+  }
+}
+
+::> Brief ::
+
+-> env specifies the environments where your code will run (e.g., browser, Node.js).
+-> extends indicates the base configuration to use (eslint:recommended includes a set of recommended rules).
+-> parserOptions specifies the ECMAScript version and other parsing options.
+-> rules lists the specific rules and their configurations (e.g., indentation, linebreak style, quotes, and semicolons).
+
+::> Developers often customize this configuration based on their project requirements and coding preferences. The .eslintrc.json file allows you to enforce a consistent coding style and catch potential issues early in the development process.
+
+::> Project's eslint ::
+
+-> "root": true: Indicates that ESLint should stop looking for configuration files in parent directories once it finds this file. This ensures that this configuration applies only to the current project.
+-> "env": { "es6": true }: Specifies that the project uses ECMAScript 6 (ES2015) features.
+-> "parserOptions": { "ecmaVersion": 2018 }: Sets the ECMAScript version to 2018.
+-> "ignorePatterns": ["projects/**/*"]: Ignores files in the specified patterns when linting. In this case, it ignores files in the "projects" directory.
+-> "overrides": Defines specific configurations for different types of files.
+
+    a. For TypeScript files (*.ts):
+    
+    "parserOptions": Specifies TypeScript-specific parser options.
+    "extends": Extends additional ESLint configurations specific to Angular projects.
+    "rules": Specifies rules and their configurations for TypeScript files. For example, it turns off certain rules ("@typescript-eslint/dot-notation", "brace-style", "import/order", etc.) and customizes others.
+    b. For HTML files (*.html):
+    
+    "extends": Extends ESLint configurations specific to Angular templates.
