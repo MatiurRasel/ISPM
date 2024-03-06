@@ -1,8 +1,0 @@
-const chroma = require('chroma-js');
-chroma-js is a JavaScript library for color manipulation, 
-providing functions for various color-related operations.
-
-const _ = require('lodash');
-The lodash library is a widely-used JavaScript utility library 
-that provides a collection of functions for common programming tasks, 
-such as working with arrays, objects, and more.

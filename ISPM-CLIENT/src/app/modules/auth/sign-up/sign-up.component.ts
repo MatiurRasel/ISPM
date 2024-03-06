@@ -12,6 +12,7 @@ import { fuseAnimations } from '@fuse/animations';
 import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
 import { MatRadioModule } from '@angular/material/radio';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 // Uppercase letter validator
 function uppercaseValidator(control: AbstractControl): ValidationErrors | null {
@@ -57,7 +58,14 @@ function maxLengthValidator(control: AbstractControl): Promise<ValidationErrors 
     encapsulation: ViewEncapsulation.None,
     animations   : fuseAnimations,
     standalone   : true,
-    imports      : [RouterLink, NgIf, FuseAlertComponent, FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, MatCheckboxModule, MatProgressSpinnerModule,MatRadioModule],
+    imports      : [
+        RouterLink, NgIf, FuseAlertComponent, 
+        FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, 
+        MatButtonModule, MatIconModule, MatCheckboxModule, 
+        MatProgressSpinnerModule,MatRadioModule, 
+        MatDatepickerModule, // Update the import statement here
+        //MatDatetimepickerModule
+    ],
 })
 
 
@@ -71,7 +79,7 @@ export class AuthSignUpComponent implements OnInit
     };
     signUpForm: UntypedFormGroup;
     showAlert: boolean = false;
-
+    maxDate: Date = new Date();
     /**
      * Constructor
      */
@@ -92,10 +100,11 @@ export class AuthSignUpComponent implements OnInit
      */
     ngOnInit(): void
     {
+       
         // Create the form
         this.signUpForm = this._formBuilder.group({
                 gender      : ['M'],
-                fullName    : ['', Validators.required],
+                // fullName    : ['', Validators.required],
                 userName    : ['', Validators.required],
                 //dateOfBirth : ['',Validators.required],
                 // city        : [''],
@@ -127,13 +136,16 @@ export class AuthSignUpComponent implements OnInit
                         this.matchValues('password')]],
                         
                 //company     : [''],
-                agreements  : ['', Validators.requiredTrue],
+                dateOfBirth: ['',Validators.required],
+                // agreements  : ['', Validators.requiredTrue],
             },
         );
 
+        this.maxDate.setFullYear(this.maxDate.getFullYear() -18);
+
         this.signUpForm.controls['password'].valueChanges.subscribe({
             next: () => this.signUpForm.controls['confirmPassword'].updateValueAndValidity()
-        })
+        });
     }
     
     getEmailErrorMessage(): string {
@@ -224,37 +236,51 @@ export class AuthSignUpComponent implements OnInit
             return;
         }
 
+        const dob = this.getDateOnly(this.signUpForm.controls['dateOfBirth'].value);
+
+
         // Disable the form
         this.signUpForm.disable();
 
         // Hide the alert
         this.showAlert = false;
-
+        const values = {...this.signUpForm.value,dateOfBirth: dob};
         // Sign up
-        this._authService.signUp(this.signUpForm.value)
-            .subscribe(
-                (response) =>
-                {
-                    // Navigate to the confirmation required page
-                    this._router.navigateByUrl('/confirmation-required');
-                },
-                (response) =>
-                {
-                    // Re-enable the form
-                    this.signUpForm.enable();
+        this._authService.register(values).subscribe();
 
-                    // Reset the form
-                    this.signUpNgForm.resetForm();
+        // this._authService.signUp(values)
+        //     .subscribe(
+        //         (response) =>
+        //         {
+        //             // Navigate to the confirmation required page
+        //             this._router.navigateByUrl('/signed-in-redirect');
+        //         },
+        //         (response) =>
+        //         {
+        //             // Re-enable the form
+        //             this.signUpForm.enable();
 
-                    // Set the alert
-                    this.alert = {
-                        type   : 'error',
-                        message: 'Something went wrong, please try again.',
-                    };
+        //             // Reset the form
+        //             this.signUpNgForm.resetForm();
 
-                    // Show the alert
-                    this.showAlert = true;
-                },
-            );
+        //             // Set the alert
+        //             this.alert = {
+        //                 type   : 'error',
+        //                 message: 'Something went wrong, please try again.',
+        //             };
+
+        //             // Show the alert
+        //             this.showAlert = true;
+        //         },
+        //     );
     }
+
+    private getDateOnly(dob: string | undefined) {
+        if(!dob) return;
+        let theDob = new Date(dob);
+        return new Date(theDob.setMinutes(
+          theDob.getMinutes()-theDob.getTimezoneOffset()
+          )).toISOString().slice(0,10);
+    
+      }
 }

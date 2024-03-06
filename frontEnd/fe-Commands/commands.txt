@@ -1,3 +1,0 @@
-npm install chroma-js
-npm install postcss-loader@latest
-npm install @tailwindcss/typography

@@ -3,6 +3,8 @@ import { inject, Injectable } from '@angular/core';
 import { AuthUtils } from 'app/core/auth/auth.utils';
 import { UserService } from 'app/core/user/user.service';
 import { catchError, Observable, of, switchMap, throwError } from 'rxjs';
+import { User } from '../user/user.types';
+import { environment } from 'environments/environment';
 
 @Injectable({providedIn: 'root'})
 export class AuthService
@@ -10,7 +12,7 @@ export class AuthService
     private _authenticated: boolean = false;
     private _httpClient = inject(HttpClient);
     private _userService = inject(UserService);
-
+    baseUrl = environment.apiUrl;
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
     // -----------------------------------------------------------------------------------------------------
@@ -147,6 +149,11 @@ export class AuthService
     {
         debugger
         return this._httpClient.post('api/auth/sign-up', user);
+    }
+    register(model: any) {
+        debugger
+        return this._httpClient.post<User>(this.baseUrl + 'account/register',model);
+           
     }
 
     /**
