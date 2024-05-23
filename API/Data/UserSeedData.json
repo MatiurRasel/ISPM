@@ -6,7 +6,8 @@
     "LastActive": "2020-06-06",
     "Gender": "male",
     "City": "Dhaka",
-    "Country": "Bangladesh"
+    "Country": "Bangladesh",
+    "Email": "matiur@email.com"
     },
     {
         "UserName": "rasel",
@@ -15,7 +16,8 @@
         "LastActive": "2020-06-06",
         "Gender": "male",
         "City": "Dhaka",
-        "Country": "Bangladesh"
+        "Country": "Bangladesh",
+        "Email": "rasel@email.com"
     },
     {
         "UserName": "arif",
@@ -24,7 +26,8 @@
         "LastActive": "2020-06-06",
         "Gender": "male",
         "City": "Dhaka",
-        "Country": "Bangladesh"
+        "Country": "Bangladesh",
+        "Email": "arif@email.com"
     },
     {
         "UserName": "sami",
@@ -33,7 +36,8 @@
         "LastActive": "2020-06-06",
         "Gender": "male",
         "City": "Dhaka",
-        "Country": "Bangladesh"
+        "Country": "Bangladesh",
+        "Email": "sami@email.com"
     },
     {
         "UserName": "masbah",
@@ -42,7 +46,8 @@
         "LastActive": "2020-06-06",
         "Gender": "male",
         "City": "Dhaka",
-        "Country": "Bangladesh"
+        "Country": "Bangladesh",
+        "Email": "masbah@email.com"
     },
     {
         "UserName": "milon",
@@ -51,6 +56,7 @@
         "LastActive": "2020-06-06",
         "Gender": "male",
         "City": "Dhaka",
-        "Country": "Bangladesh"
+        "Country": "Bangladesh",
+        "Email": "milon@email.com"
     }
 ]
