@@ -7,7 +7,7 @@ namespace API.Entities.Project
     public class Project
     {
         [Key]
-        public long ProjectID { get; set; }
+        public int ProjectID { get; set; }
 
         [Required]
         [StringLength(10)]
@@ -19,8 +19,8 @@ namespace API.Entities.Project
 
         public string Description { get; set; }
 
-        [ForeignKey("User")]
-        public long? LeadUserID { get; set; }
+        [ForeignKey("LeadUser")]
+        public int? LeadUserID { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.Now;

@@ -1,3 +1,4 @@
+using API.Entities.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -7,10 +8,10 @@ namespace API.Entities
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }
+        public int Id { get; set; }
 
         [ForeignKey("User")]
-        public long UserId { get; set; }
+        public int UserId { get; set; }
 
         [Required]
         [MaxLength(100)]

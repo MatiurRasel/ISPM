@@ -1,3 +1,4 @@
+using API.Entities.Identity;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -6,10 +7,10 @@ namespace API.Entities.Project
     public class Issue
     {
         [Key]
-        public long IssueID { get; set; }
+        public int IssueID { get; set; }
 
         [ForeignKey("Project")]
-        public long ProjectID { get; set; }
+        public int ProjectID { get; set; }
 
         [Required]
         [StringLength(20)]
@@ -28,10 +29,10 @@ namespace API.Entities.Project
         public string Status { get; set; }
 
         [ForeignKey("Assignee")]
-        public long? AssigneeID { get; set; }
+        public int? AssigneeID { get; set; }
 
         [ForeignKey("Reporter")]
-        public long? ReporterID { get; set; }
+        public int? ReporterID { get; set; }
 
         [Required]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
