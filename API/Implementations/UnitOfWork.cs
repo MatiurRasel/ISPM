@@ -15,7 +15,6 @@ namespace API.Implementations
             
         }
         public IUserRepository UserRepository =>  new UserRepository(_context,_mapper);
-
         public async Task<bool> Complete()
         {
             return await _context.SaveChangesAsync() > 0;

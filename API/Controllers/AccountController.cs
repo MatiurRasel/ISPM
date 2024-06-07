@@ -1,5 +1,5 @@
 using API.DTOs;
-using API.Entities;
+using API.Entities.Identity;
 using API.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;

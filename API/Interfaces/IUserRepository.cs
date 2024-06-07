@@ -1,4 +1,4 @@
-using API.Entities;
+using API.Entities.Identity;
 
 namespace API.Interfaces
 {

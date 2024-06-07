@@ -4,7 +4,7 @@ namespace API.Entities.Identity
 {
     public class User : IdentityUser<int>
     {
-        
+        public string FullName {get;set;}
         public DateTime DateOfBirth {get;set;} 
         public DateTime Created {get;set;} = DateTime.UtcNow;
         public DateTime LastActive {get;set;} = DateTime.UtcNow;
