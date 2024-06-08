@@ -1,6 +1,7 @@
 using API.DTOs;
 using API.Entities.Identity;
 using API.Services;
+using API.Utility.Enums;
 using AutoMapper;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -28,8 +29,10 @@ namespace API.Controllers
         [HttpPost("register")]//POST: api/account/register
         public async Task<ActionResult<UserDTO>> Register(RegisterDTO registerDTO)
         {
-            if(await UserExists(registerDTO.UserName)) return BadRequest("User Name is exists.");
-            
+            if(await UserExistsOnNameAsync(registerDTO.UserName)) return BadRequest("User Name is exists.");
+            if (await UserExistsOnEmail(registerDTO.Email)) return BadRequest("Email is exists.");
+            if (await UserExistsOnPhoneNumber(registerDTO.PhoneNumber)) return BadRequest("Phone Number is exists.");
+
             var user = _mapper.Map<User>(registerDTO);
 
             user.UserName = registerDTO.UserName;
@@ -51,10 +54,15 @@ namespace API.Controllers
         [HttpPost("login")]
         public async Task<ActionResult<UserDTO>> Login(LoginDTO loginDTO)
         {
-            var user = await _user.Users
-            .FirstOrDefaultAsync(x => x.UserName.ToUpper() == loginDTO.UserName.ToUpper());
+            //var user = await _user.Users
+            //.FirstOrDefaultAsync(x => x.UserName.ToUpper() == loginDTO.UserName.ToUpper());
 
-            if (user == null) return Unauthorized("Invalid User Name.");
+            //if (user == null) return Unauthorized("Invalid User Name.");
+
+            var user = await _user.Users
+            .FirstOrDefaultAsync(x => x.Email.ToUpper() == loginDTO.Email.ToUpper());
+
+            if (user == null) return Unauthorized("Invalid Email.");
 
             var result = await _user.CheckPasswordAsync(user,loginDTO.Password);
 
@@ -69,9 +77,31 @@ namespace API.Controllers
         }
 
 
-        private async Task<bool> UserExists(string userName)
+        private async Task<bool> UserExistsOnNameAsync(string userName)
         {
-            return await _user.Users.AnyAsync(x => x.UserName.ToUpper() == userName.ToUpper());
+            return await UserExistsAsync(UserCheckType.UserName, userName);
+        }
+        private async Task<bool> UserExistsOnEmail(string email)
+        {
+            return await UserExistsAsync(UserCheckType.Email, email);
+        }
+
+        private async Task<bool> UserExistsOnPhoneNumber(string phoneNumber)
+        {
+            return await UserExistsAsync(UserCheckType.PhoneNumber, phoneNumber);
+        }
+
+        private async Task<bool> UserExistsAsync(UserCheckType checkType, string value)
+        {
+            value = value.ToUpper();
+
+            return checkType switch
+            {
+                UserCheckType.UserName => await _user.Users.AnyAsync(x => x.UserName.ToUpper() == value),
+                UserCheckType.Email => await _user.Users.AnyAsync(x => x.Email.ToUpper() == value),
+                UserCheckType.PhoneNumber => await _user.Users.AnyAsync(x => x.PhoneNumber.ToUpper() == value),
+                _ => throw new ArgumentException("Invalid check type")
+            };
         }
     }
 }
