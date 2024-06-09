@@ -52,7 +52,11 @@ namespace API.Data
             var admin = new User
             {
                 UserName = "admin",
-                Email = "admin@ispm.com"
+                Email = "admin@ispm.com",
+                Gender = "male",
+                FullName = "ISPM ADMIN",
+                DateOfBirth = DateTime.Now,
+
             };
 
             await userManager.CreateAsync(admin, "aA0202");

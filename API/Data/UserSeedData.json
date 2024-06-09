@@ -1,13 +1,13 @@
 [
     {
-    "UserName": "matiur",
-    "DateOfBirth": "1995-12-26",
-    "Created": "2020-05-07",
-    "LastActive": "2020-06-06",
-    "Gender": "male",
-    "City": "Dhaka",
-    "Country": "Bangladesh",
-    "Email": "matiur@email.com"
+        "UserName": "matiur",
+        "DateOfBirth": "1995-12-26",
+        "Created": "2020-05-07",
+        "LastActive": "2020-06-06",
+        "Gender": "male",
+        "City": "Dhaka",
+        "Country": "Bangladesh",
+        "Email": "matiur@email.com"
     },
     {
         "UserName": "rasel",

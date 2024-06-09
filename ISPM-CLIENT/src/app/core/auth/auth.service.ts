@@ -66,12 +66,13 @@ export class AuthService
         {
             return throwError('User is already logged in.');
         }
-
+        debugger
         return this._httpClient.post<User>(this.baseUrl + 'account/login', model).pipe(
             switchMap((response: any) =>
             {
+                console.log(response)
                 // Store the access token in the local storage
-                this.accessToken = response.accessToken;
+                this.accessToken = response.token;
 
                 // Set the authenticated flag to true
                 this._authenticated = true;
