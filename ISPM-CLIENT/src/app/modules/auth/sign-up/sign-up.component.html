@@ -3,196 +3,92 @@
         <div class="w-full max-w-80 sm:w-80 mx-auto sm:mx-0">
             <!-- Logo -->
             <div class="w-12">
-                <img src="assets/images/logo/logo.svg">
+                <img src="assets/images/logo/logo.svg" alt="Logo">
             </div>
-
             <!-- Title -->
             <div class="mt-8 text-4xl font-extrabold tracking-tight leading-tight">Sign up</div>
             <div class="flex items-baseline mt-0.5 font-medium">
                 <div>Already have an account?</div>
-                <a
-                    class="ml-1 text-primary-500 hover:underline"
-                    [routerLink]="['/sign-in']">Sign in
-                </a>
+                <a class="ml-1 text-primary-500 hover:underline" [routerLink]="['/sign-in']">Sign in</a>
             </div>
-
             <!-- Alert -->
-            <fuse-alert
-                class="mt-8"
-                *ngIf="showAlert"
-                [appearance]="'outline'"
-                [showIcon]="false"
-                [type]="alert.type"
-                [@shake]="alert.type === 'error'">
+            <fuse-alert class="mt-8" *ngIf="showAlert" [appearance]="'outline'" [showIcon]="false" [type]="alert.type" [@shake]="alert.type === 'error'">
                 {{alert.message}}
             </fuse-alert>
-
             <!-- Sign Up form -->
-            <form
-                class="mt-8"
-                [formGroup]="signUpForm"
-                #signUpNgForm="ngForm">
-                    
+            <form class="mt-8" [formGroup]="signUpForm" #signUpNgForm="ngForm">
                 <!-- Gender field -->
-                <div class="w-full">
-                    <mat-label>I am a: </mat-label>
+                <div class="w-full mb-4">
+                    <mat-label>I am a:</mat-label>
                     <mat-radio-group formControlName="gender">
                         <mat-radio-button value="M">Male</mat-radio-button>
                         <mat-radio-button value="F">Female</mat-radio-button>
                     </mat-radio-group>
                 </div>
-                
-                <!--Full Name field -->
-                <!-- <mat-form-field class="w-full">
+                <!-- Full Name field -->
+                <mat-form-field class="w-full">
                     <mat-label>Full Name</mat-label>
-                    <input
-                        id="fullName"
-                        matInput
-                        [formControlName]="'fullName'">
-                    <mat-error *ngIf="signUpForm.get('fullName').hasError('required')">
-                        Full Name is required
-                    </mat-error>
-                </mat-form-field> -->
-
-                <!--User Name field -->
+                    <input id="fullName" matInput formControlName="fullName">
+                </mat-form-field>
+                <!-- User Name field -->
                 <mat-form-field class="w-full">
                     <mat-label>User Name</mat-label>
-                    <input
-                        id="userName"
-                        matInput
-                        [formControlName]="'userName'">
-                    <mat-error *ngIf="signUpForm.get('userName').hasError('required')">
-                        User Name is required
-                    </mat-error>
+                    <input id="userName" matInput formControlName="userName">
+                    <mat-error *ngIf="signUpForm.get('userName').hasError('required')">User Name is required</mat-error>
                 </mat-form-field>
-
-                <!--Birth Date field -->
+                <!-- Birth Date field -->
                 <mat-form-field class="w-full">
                     <mat-label>Date of Birth</mat-label>
-                    <input 
-                    matInput 
-                    [matDatepicker]="picker"
-                    [max]="maxDate" 
-                    [formControl]="signUpForm.get('dateOfBirth')" placeholder="Date of Birth">
+                    <input matInput [matDatepicker]="picker" [max]="maxDate" formControlName="dateOfBirth" placeholder="Date of Birth">
                     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-                    <mat-error *ngIf="signUpForm.get('dateOfBirth').hasError('required')">
-                      Date of Birth is required
-                    </mat-error>
+                    <mat-error *ngIf="signUpForm.get('dateOfBirth').hasError('required')">Date of Birth is required</mat-error>
                     <mat-datepicker #picker></mat-datepicker>
                 </mat-form-field>
-
-
                 <!-- Email field -->
                 <mat-form-field class="w-full">
                     <mat-label>Email Address</mat-label>
-                    <input
-                        id="email"
-                        matInput
-                        [formControlName]="'email'">
-                    <mat-error *ngIf="signUpForm.get('email').touched && signUpForm.get('email').invalid ">
-                        {{getEmailErrorMessage()}}
-                    </mat-error>
+                    <input id="email" matInput formControlName="email">
+                    <mat-error *ngIf="signUpForm.get('email').touched && signUpForm.get('email').invalid">{{getEmailErrorMessage()}}</mat-error>
                 </mat-form-field>
+                <mat-form-field class="w-full" appearance="fill">
+                    <mat-label>Mobile Number</mat-label>
+                    <!-- Flexbox approach -->
+                    <div class="flex items-center">
+                      <!-- Span showing the disabled value -->
+                      <span class="mr-2">+880</span>
+                      <!-- Input field for Mobile Number -->
+                      <input id="mobileNumber" matInput formControlName="mobileNumber" type="tel" pattern="[0-9]{10}" maxlength="10">
+                    </div>
+                    <!-- Error message -->
+                    <mat-error *ngIf="signUpForm.get('mobileNumber').touched && signUpForm.get('mobileNumber').invalid">{{getMobileNumberErrorMessage()}}</mat-error>
+                  </mat-form-field>
+                  
 
                 <!-- Password field -->
                 <mat-form-field class="w-full">
                     <mat-label>Password</mat-label>
-                    <input
-                        id="password"
-                        matInput
-                        type="password"
-                        [formControlName]="'password'"
-                        #passwordField>
-                    <button
-                        mat-icon-button
-                        type="button"
-                        (click)="passwordField.type === 'password' ? passwordField.type = 'text' : passwordField.type = 'password'"
-                        matSuffix>
-                        <mat-icon
-                            class="icon-size-5"
-                            *ngIf="passwordField.type === 'password'"
-                            [svgIcon]="'heroicons_solid:eye'"></mat-icon>
-                        <mat-icon
-                            class="icon-size-5"
-                            *ngIf="passwordField.type === 'text'"
-                            [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
+                    <input id="password" matInput type="password" formControlName="password" #passwordField>
+                    <button mat-icon-button type="button" (click)="passwordField.type === 'password' ? passwordField.type = 'text' : passwordField.type = 'password'" matSuffix>
+                        <mat-icon class="icon-size-5" *ngIf="passwordField.type === 'password'" [svgIcon]="'heroicons_solid:eye'"></mat-icon>
+                        <mat-icon class="icon-size-5" *ngIf="passwordField.type === 'text'" [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
                     </button>
-                    
-                    <mat-error *ngIf="signUpForm.get('password').touched && signUpForm.get('password').invalid">
-                        {{ getPasswordErrorMessage() }}
-                      </mat-error>
-                      
-                    
+                    <mat-error *ngIf="signUpForm.get('password').touched && signUpForm.get('password').invalid">{{ getPasswordErrorMessage() }}</mat-error>
                 </mat-form-field>
-
                 <!-- Confirm Password field -->
                 <mat-form-field class="w-full">
                     <mat-label>Confirm Password</mat-label>
-                    <input
-                        id="confirmPassword"
-                        matInput
-                        type="password"
-                        [formControlName]="'confirmPassword'"
-                        #confirmPasswordField>
-                    <button
-                        mat-icon-button
-                        type="button"
-                        (click)="passwordField.type === 'password' ? passwordField.type = 'text' : passwordField.type = 'password'"
-                        matSuffix>
-                        <mat-icon
-                            class="icon-size-5"
-                            *ngIf="passwordField.type === 'password'"
-                            [svgIcon]="'heroicons_solid:eye'"></mat-icon>
-                        <mat-icon
-                            class="icon-size-5"
-                            *ngIf="passwordField.type === 'text'"
-                            [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
+                    <input id="confirmPassword" matInput type="password" formControlName="confirmPassword" #confirmPasswordField>
+                    <button mat-icon-button type="button" (click)="confirmPasswordField.type === 'password' ? confirmPasswordField.type = 'text' : confirmPasswordField.type = 'password'" matSuffix>
+                        <mat-icon class="icon-size-5" *ngIf="confirmPasswordField.type === 'password'" [svgIcon]="'heroicons_solid:eye'"></mat-icon>
+                        <mat-icon class="icon-size-5" *ngIf="confirmPasswordField.type === 'text'" [svgIcon]="'heroicons_solid:eye-slash'"></mat-icon>
                     </button>
-                    
-                    <mat-error *ngIf="signUpForm.get('confirmPassword').touched && signUpForm.get('confirmPassword').invalid">
-                        {{ getConfirmPasswordErrorMessage() }}
-                      </mat-error>
-                      
-                    
+                    <mat-error *ngIf="signUpForm.get('confirmPassword').touched && signUpForm.get('confirmPassword').invalid">{{ getConfirmPasswordErrorMessage() }}</mat-error>
                 </mat-form-field>
-
-                
-
-                <!-- ToS and PP -->
-                <!-- <div class="inline-flex items-end w-full mt-1.5">
-                    <mat-checkbox
-                        class="-ml-2"
-                        [color]="'primary'"
-                        [formControlName]="'agreements'">
-                        <span>I agree with</span>
-                        <a
-                            class="ml-1 text-primary-500 hover:underline"
-                            [routerLink]="['./']">Terms
-                        </a>
-                        <span>and</span>
-                        <a
-                            class="ml-1 text-primary-500 hover:underline"
-                            [routerLink]="['./']">Privacy Policy
-                        </a>
-                    </mat-checkbox>
-                </div> -->
-
                 <!-- Submit button -->
-                <button
-                    class="fuse-mat-button-large w-full mt-6"
-                    mat-flat-button
-                    [color]="'primary'"
-                    [disabled]="signUpForm.disabled || signUpForm.invalid"
-                    (click)="signUp()">
-                    <span *ngIf="!signUpForm.disabled">
-                        Create your free account
-                    </span>
-                    <mat-progress-spinner
-                        *ngIf="signUpForm.disabled"
-                        [diameter]="24"
-                        [mode]="'indeterminate'"></mat-progress-spinner>
+                <button class="fuse-mat-button-large w-full mt-6" mat-flat-button color="primary" [disabled]="signUpForm.disabled || signUpForm.invalid" (click)="signUp()">
+                    <span *ngIf="!signUpForm.disabled">Create your free account</span>
+                    <mat-progress-spinner *ngIf="signUpForm.disabled" diameter="24" mode="indeterminate"></mat-progress-spinner>
                 </button>
-
             </form>
         </div>
     </div>

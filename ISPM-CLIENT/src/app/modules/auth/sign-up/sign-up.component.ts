@@ -13,6 +13,8 @@ import { FuseAlertComponent, FuseAlertType } from '@fuse/components/alert';
 import { AuthService } from 'app/core/auth/auth.service';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDatepickerModule } from '@angular/material/datepicker';
+import { NgxIntlTelInputModule } from 'ngx-intl-tel-input';
+import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
 // Uppercase letter validator
 function uppercaseValidator(control: AbstractControl): ValidationErrors | null {
@@ -59,18 +61,24 @@ function maxLengthValidator(control: AbstractControl): Promise<ValidationErrors 
     animations   : fuseAnimations,
     standalone   : true,
     imports      : [
+        
         RouterLink, NgIf, FuseAlertComponent, 
         FormsModule, ReactiveFormsModule, MatFormFieldModule, MatInputModule, 
         MatButtonModule, MatIconModule, MatCheckboxModule, 
         MatProgressSpinnerModule,MatRadioModule, 
         MatDatepickerModule, // Update the import statement here
         //MatDatetimepickerModule
+        NgxIntlTelInputModule,
+        BsDropdownModule,
+        
     ],
 })
 
 
 export class AuthSignUpComponent implements OnInit
 {
+    
+
     @ViewChild('signUpNgForm') signUpNgForm: NgForm;
 
     alert: { type: FuseAlertType; message: string } = {
@@ -104,7 +112,7 @@ export class AuthSignUpComponent implements OnInit
         // Create the form
         this.signUpForm = this._formBuilder.group({
                 gender      : ['M'],
-                // fullName    : ['', Validators.required],
+                fullName    : [''],
                 userName    : ['', Validators.required],
                 //dateOfBirth : ['',Validators.required],
                 // city        : [''],
@@ -138,6 +146,7 @@ export class AuthSignUpComponent implements OnInit
                 //company     : [''],
                 dateOfBirth: ['',Validators.required],
                 // agreements  : ['', Validators.requiredTrue],
+                mobileNumber: ['', [Validators.required, Validators.pattern('[0-9]{10}')]],
             },
         );
 
@@ -160,7 +169,29 @@ export class AuthSignUpComponent implements OnInit
         }
         
     }
+
+    getMobileNumberErrorMessage(): string {
+        const mobileNumber = this.signUpForm.get('mobileNumber');
+
+        if (mobileNumber.hasError('required')) {
+            return 'Mobile Number is required';
+        }
     
+        if (mobileNumber.hasError('pattern')) {
+            return 'Please enter a 10-digit number';
+        }
+    
+        return '';
+        
+    }
+    
+    onKeyDown(event: KeyboardEvent) {
+        // Allow numeric characters (0-9) and special keys like Backspace, Delete, Arrow keys
+        if (!(event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown' || (event.key >= '0' && event.key <= '9'))) {
+            event.preventDefault();
+        }
+      }
+
     getPasswordErrorMessage(): string {
         const passwordControl = this.signUpForm.get('password');
       
