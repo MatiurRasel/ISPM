@@ -146,8 +146,16 @@ export class AuthSignUpComponent implements OnInit
                 //company     : [''],
                 dateOfBirth: ['',Validators.required],
                 // agreements  : ['', Validators.requiredTrue],
-                mobileNumber: ['', [Validators.required, Validators.pattern('[0-9]{10}')]],
-            },
+                mobileNumber: [
+                    '',
+                    [
+                        Validators.required, 
+                        Validators.pattern('^[1-9][0-9]{9}$'), 
+                        //this.firstDigitValidator,
+                        //this.noAllZerosValidator
+                    ]
+                  ],
+                },
         );
 
         this.maxDate.setFullYear(this.maxDate.getFullYear() -18);
@@ -178,19 +186,64 @@ export class AuthSignUpComponent implements OnInit
         }
     
         if (mobileNumber.hasError('pattern')) {
-            return 'Please enter a 10-digit number';
+            return 'Please enter a valid number';
         }
+
+        // if (mobileNumber.hasError('firstDigitZero')) {
+        //     return 'Mobile Number cannot start with 0';
+        // }
+
+        // if (mobileNumber.hasError('allZeros')) {
+        //     return 'Mobile Number cannot be all zeros';
+        // }
     
         return '';
         
     }
-    
-    onKeyDown(event: KeyboardEvent) {
-        // Allow numeric characters (0-9) and special keys like Backspace, Delete, Arrow keys
-        if (!(event.key === 'Backspace' || event.key === 'Delete' || event.key === 'ArrowLeft' || event.key === 'ArrowRight' || event.key === 'ArrowUp' || event.key === 'ArrowDown' || (event.key >= '0' && event.key <= '9'))) {
-            event.preventDefault();
+
+    validateNumber(event: KeyboardEvent): void {
+        const charCode = event.charCode;
+        if (charCode < 48 || charCode > 57) {
+          event.preventDefault();
         }
       }
+      
+    //   noAllZerosValidator(control: AbstractControl): ValidationErrors | null {
+    //     const value = control.value;
+    //     if (value && /^(0{10})$/.test(value)) {
+    //       return { allZeros: true };
+    //     }
+    //     return null;
+    //   }
+
+    // firstDigitValidator(control: AbstractControl): ValidationErrors | null {
+    //     const value = control.value;
+    //     if (value && value[0] === '0') {
+    //       return { firstDigitZero: true };
+    //     }
+    //     return null;
+    //   }
+    
+    onKeyDown(event: KeyboardEvent): void {
+        const inputValue = (event.target as HTMLInputElement).value;
+        // Allow numeric characters (0-9) and special keys like Backspace, Delete, Arrow keys
+        if (!(
+                event.key === 'Backspace' || 
+                event.key === 'Delete' || 
+                event.key === 'ArrowLeft' || 
+                event.key === 'ArrowRight' || 
+                event.key === 'ArrowUp' || 
+                event.key === 'ArrowDown' || 
+                event.key === 'Tab' ||
+                (event.key >= '0' && event.key <= '9'))) {
+            event.preventDefault();
+        }
+        // Prevent '0' as the first character
+        if (inputValue.length === 0 && event.key === '0') {
+            event.preventDefault();
+        }
+    }
+    
 
     getPasswordErrorMessage(): string {
         const passwordControl = this.signUpForm.get('password');
@@ -267,7 +320,7 @@ export class AuthSignUpComponent implements OnInit
             return;
         }
 
-        const dob = this.getDateOnly(this.signUpForm.controls['dateOfBirth'].value);
+        const dob = this.getDateOnly(this.signUpForm.controls['dateOfBirth'].value);//yyyy-mm-dd
 
 
         // Disable the form
@@ -275,35 +328,45 @@ export class AuthSignUpComponent implements OnInit
 
         // Hide the alert
         this.showAlert = false;
-        const values = {...this.signUpForm.value,dateOfBirth: dob};
+        this.signUpForm.controls['dateOfBirth'].setValue(dob);
+        //const values = {...this.signUpForm.value,dateOfBirth: dob};
         // Sign up
-        this._authService.register(values).subscribe();
+        //this._authService.register(values).subscribe();
+        debugger
+        this._authService.signUp(this.signUpForm.value)
+            .subscribe(
+                (response) =>
+                {
+                    // Navigate to the confirmation required page
+                    this._router.navigateByUrl('/signed-in-redirect');
+                },
+                (response) =>
+                {
+                    // Re-enable the form
+                    this.signUpForm.enable();
 
-        // this._authService.signUp(values)
-        //     .subscribe(
-        //         (response) =>
-        //         {
-        //             // Navigate to the confirmation required page
-        //             this._router.navigateByUrl('/signed-in-redirect');
-        //         },
-        //         (response) =>
-        //         {
-        //             // Re-enable the form
-        //             this.signUpForm.enable();
+                     // Reset the form with default values
+                    this.signUpNgForm.resetForm({
+                      gender: 'M',
+                      fullName: '',
+                      userName: '',
+                      email: '',
+                      password: '',
+                      confirmPassword: '',
+                      dateOfBirth: '',
+                      mobileNumber: '',
+                    });
 
-        //             // Reset the form
-        //             this.signUpNgForm.resetForm();
+                    // Set the alert
+                    this.alert = {
+                        type   : 'error',
+                        message: 'Something went wrong, please try again.',
+                    };
 
-        //             // Set the alert
-        //             this.alert = {
-        //                 type   : 'error',
-        //                 message: 'Something went wrong, please try again.',
-        //             };
-
-        //             // Show the alert
-        //             this.showAlert = true;
-        //         },
-        //     );
+                    // Show the alert
+                    this.showAlert = true;
+                },
+            );
     }
 
     private getDateOnly(dob: string | undefined) {

@@ -11,12 +11,14 @@ namespace API.DTOs
         [Required]
         public string UserName { get; set; }
         [Required]
-        public string PhoneNumber { get; set; }
+        public string MobileNumber { get; set; }
         [Required] 
         public DateTime? DateOfBirth { get; set; } 
 
         [Required]
         [StringLength(10,MinimumLength = 4)]
         public string Password { get; set; }
+
+        public string FullName { get; set; }
     }
 }

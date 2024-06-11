@@ -31,7 +31,7 @@ namespace API.Controllers
         {
             if(await UserExistsOnNameAsync(registerDTO.UserName)) return BadRequest("User Name is exists.");
             if (await UserExistsOnEmail(registerDTO.Email)) return BadRequest("Email is exists.");
-            if (await UserExistsOnPhoneNumber(registerDTO.PhoneNumber)) return BadRequest("Phone Number is exists.");
+            if (await UserExistsOnPhoneNumber(registerDTO.MobileNumber)) return BadRequest("Phone Number is exists.");
 
             var user = _mapper.Map<User>(registerDTO);
 

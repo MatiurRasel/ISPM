@@ -16,7 +16,10 @@
                 {{alert.message}}
             </fuse-alert>
             <!-- Sign Up form -->
-            <form class="mt-8" [formGroup]="signUpForm" #signUpNgForm="ngForm">
+            <form 
+                class="mt-8" 
+                [formGroup]="signUpForm" 
+                #signUpNgForm="ngForm">
                 <!-- Gender field -->
                 <div class="w-full mb-4">
                     <mat-label>I am a:</mat-label>
@@ -50,20 +53,27 @@
                     <input id="email" matInput formControlName="email">
                     <mat-error *ngIf="signUpForm.get('email').touched && signUpForm.get('email').invalid">{{getEmailErrorMessage()}}</mat-error>
                 </mat-form-field>
+                <!-- Mobile Number field -->
                 <mat-form-field class="w-full" appearance="fill">
                     <mat-label>Mobile Number</mat-label>
-                    <!-- Flexbox approach -->
                     <div class="flex items-center">
-                      <!-- Span showing the disabled value -->
                       <span class="mr-2">+880</span>
-                      <!-- Input field for Mobile Number -->
-                      <input id="mobileNumber" matInput formControlName="mobileNumber" type="tel" pattern="[0-9]{10}" maxlength="10">
+                      <input
+                        id="mobileNumber"
+                        matInput
+                        formControlName="mobileNumber"
+                        type="tel"
+                        pattern="[0-9]{10}"
+                        maxlength="10"
+                        (keypress)="validateNumber($event)"
+                        (keydown)="onKeyDown($event)"
+                      />
                     </div>
-                    <!-- Error message -->
-                    <mat-error *ngIf="signUpForm.get('mobileNumber').touched && signUpForm.get('mobileNumber').invalid">{{getMobileNumberErrorMessage()}}</mat-error>
+                    <mat-error *ngIf="signUpForm.get('mobileNumber').touched && signUpForm.get('mobileNumber').invalid">
+                      {{ getMobileNumberErrorMessage() }}
+                    </mat-error>
                   </mat-form-field>
                   
-
                 <!-- Password field -->
                 <mat-form-field class="w-full">
                     <mat-label>Password</mat-label>
