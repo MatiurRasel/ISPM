@@ -53,7 +53,7 @@ namespace API.Data
             {
                 UserName = "admin",
                 Email = "admin@ispm.com",
-                Gender = "male",
+                Gender = "M",
                 FullName = "ISPM ADMIN",
                 DateOfBirth = DateTime.Now,
 

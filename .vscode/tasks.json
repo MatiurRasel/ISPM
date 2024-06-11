@@ -1,0 +1,26 @@
+// {
+//     "version": "2.0.0",
+//     "tasks": [
+//         {
+//             "label": "watch",
+//             "command": "dotnet",
+//             "type": "process",
+//             "args": [
+//                 "watch",
+//                 "--no-hot-reload",
+//                 "--project",
+//                 "E:/PersonalProjects/ISPM/YourProjectName.csproj"
+//             ],
+//             "problemMatcher": "$msCompile",
+//             "group": {
+//                 "kind": "build",
+//                 "isDefault": true
+//             },
+//             "presentation": {
+//                 "reveal": "always",
+//                 "panel": "shared"
+//             },
+//             "isBackground": true
+//         }
+//     ]
+// }
