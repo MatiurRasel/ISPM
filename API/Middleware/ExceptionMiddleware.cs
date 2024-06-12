@@ -40,43 +40,47 @@ namespace API.Middleware
             }
             catch (Exception ex)
             {
-                // Log the error to the console and a log file
-                _logger.LogError(ex, ex.Message);
-
-                // Specify the path for the error log file within the "Logs" folder
-                string logsFolderPath = "Logs";
-                string errorLogFilePath = Path.Combine(logsFolderPath, "ErrorLogs.txt");
-
-                // Ensure the "Logs" folder exists
-                if (!Directory.Exists(logsFolderPath))
-                {
-                    Directory.CreateDirectory(logsFolderPath);
-                }
-
-                // Write the full error details to the error log file
-                using (StreamWriter writer = File.AppendText(errorLogFilePath))
-                {
-                    writer.WriteLine("--------------------------------------------------");
-                    writer.WriteLine($"Timestamp: {DateTime.UtcNow}");
-                    writer.WriteLine("--------------------------------------------------");
-                    writer.WriteLine(ExceptionHelper.GetExceptionDetails(ex));
-                    writer.WriteLine("--------------------------------------------------");
-                }
-
-                // Prepare a summarized response
-                context.Response.ContentType = "application/json";
-                context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-                var summaryMessage = ExceptionHelper.GetExceptionSummary(ex);
-                var response = _env.IsDevelopment()
-                    ? new ApiException(context.Response.StatusCode, summaryMessage, null)
-                    : new ApiException(context.Response.StatusCode, "An unexpected error occurred. Please try again later.", null);
-
-                var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-                var json = JsonSerializer.Serialize(response, options);
-
-                await context.Response.WriteAsync(json);
+                await HandleExceptionAsync(context, ex);
             }
+            //catch (Exception ex)
+            //{
+            //    // Log the error to the console and a log file
+            //    _logger.LogError(ex, ex.Message);
+
+            //    // Specify the path for the error log file within the "Logs" folder
+            //    string logsFolderPath = "Logs";
+            //    string errorLogFilePath = Path.Combine(logsFolderPath, "ErrorLogs.txt");
+
+            //    // Ensure the "Logs" folder exists
+            //    if (!Directory.Exists(logsFolderPath))
+            //    {
+            //        Directory.CreateDirectory(logsFolderPath);
+            //    }
+
+            //    // Write the full error details to the error log file
+            //    using (StreamWriter writer = File.AppendText(errorLogFilePath))
+            //    {
+            //        writer.WriteLine("--------------------------------------------------");
+            //        writer.WriteLine($"Timestamp: {DateTime.UtcNow}");
+            //        writer.WriteLine("--------------------------------------------------");
+            //        writer.WriteLine(ExceptionHelper.GetExceptionDetails(ex));
+            //        writer.WriteLine("--------------------------------------------------");
+            //    }
+
+            //    // Prepare a summarized response
+            //    context.Response.ContentType = "application/json";
+            //    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+            //    var summaryMessage = ExceptionHelper.GetExceptionSummary(ex);
+            //    var response = _env.IsDevelopment()
+            //        ? new ApiException(context.Response.StatusCode, summaryMessage, null)
+            //        : new ApiException(context.Response.StatusCode, "An unexpected error occurred. Please try again later.", null);
+
+            //    var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            //    var json = JsonSerializer.Serialize(response, options);
+
+            //    await context.Response.WriteAsync(json);
+            //}
 
 
 
@@ -131,6 +135,41 @@ namespace API.Middleware
 
             //    await context.Response.WriteAsync(json);
             //}
+        }
+
+        private async Task HandleExceptionAsync(HttpContext context, Exception ex)
+        {
+            _logger.LogError(ex, ex.Message);
+
+            string logsFolderPath = "Logs";
+            string errorLogFilePath = Path.Combine(logsFolderPath, "ErrorLogs.txt");
+
+            if (!Directory.Exists(logsFolderPath))
+            {
+                Directory.CreateDirectory(logsFolderPath);
+            }
+
+            using (StreamWriter writer = File.AppendText(errorLogFilePath))
+            {
+                writer.WriteLine("--------------------------------------------------");
+                writer.WriteLine($"Timestamp: {DateTime.UtcNow}");
+                writer.WriteLine("--------------------------------------------------");
+                writer.WriteLine(ExceptionHelper.GetExceptionDetails(ex));
+                writer.WriteLine("--------------------------------------------------");
+            }
+
+            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+
+            var summaryMessage = ExceptionHelper.GetExceptionSummary(ex);
+            var response = _env.IsDevelopment()
+                ? new ApiException(context.Response.StatusCode, summaryMessage, null)
+                : new ApiException(context.Response.StatusCode, "An unexpected error occurred. Please try again later.", null);
+
+            var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            var json = JsonSerializer.Serialize(response, options);
+
+            await context.Response.WriteAsync(json);
         }
     }
 }

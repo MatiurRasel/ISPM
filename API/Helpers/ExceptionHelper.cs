@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.ComponentModel.DataAnnotations;
 using System.Text;
 
 namespace API.Helpers
@@ -35,6 +36,10 @@ namespace API.Helpers
             {
                 AppendSqlExceptionDetails(sb, sqlEx);
             }
+            else if (ex is ValidationException validationEx)
+            {
+                AppendValidationExceptionDetails(sb, validationEx);
+            }
 
             if (ex.InnerException != null)
             {
@@ -56,6 +61,10 @@ namespace API.Helpers
             else if (ex is SqlException sqlEx)
             {
                 AppendSqlExceptionSummary(sb, sqlEx);
+            }
+            else if (ex is ValidationException validationEx)
+            {
+                AppendValidationExceptionSummary(sb, validationEx);
             }
 
             if (ex.InnerException != null)
@@ -86,6 +95,13 @@ namespace API.Helpers
             sb.AppendLine(new string('-', 50));
         }
 
+        private static void AppendValidationExceptionDetails(StringBuilder sb, ValidationException ex)
+        {
+            sb.AppendLine("ValidationException Details:");
+            sb.AppendLine($"Validation failed: {ex.Message}");
+            sb.AppendLine(new string('-', 50));
+        }
+
         private static void AppendDbUpdateExceptionSummary(StringBuilder sb, DbUpdateException ex)
         {
             sb.AppendLine("DbUpdateException Summary:");
@@ -97,6 +113,13 @@ namespace API.Helpers
         {
             sb.AppendLine("SqlException Summary:");
             sb.AppendLine($"Errors: {ex.Errors.Count}");
+            sb.AppendLine(new string('-', 50));
+        }
+
+        private static void AppendValidationExceptionSummary(StringBuilder sb, ValidationException ex)
+        {
+            sb.AppendLine("ValidationException Summary:");
+            sb.AppendLine($"Validation failed: {ex.Message}");
             sb.AppendLine(new string('-', 50));
         }
     }

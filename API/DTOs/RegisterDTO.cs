@@ -5,6 +5,7 @@ namespace API.DTOs
     public class RegisterDTO
     {
         [Required]
+        [StringLength(2, ErrorMessage = "Gender can only be 2 characters long.")]
         public string Gender { get; set; }
         [Required]
         public string Email { get; set; }
@@ -18,7 +19,7 @@ namespace API.DTOs
         [Required]
         [StringLength(10,MinimumLength = 4)]
         public string Password { get; set; }
-
+        [MaxLength(100, ErrorMessage = "Full Name Maximum Length is 100 characters.")]
         public string FullName { get; set; }
     }
 }

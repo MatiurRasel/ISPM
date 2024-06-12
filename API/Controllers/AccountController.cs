@@ -29,7 +29,11 @@ namespace API.Controllers
         [HttpPost("register")]//POST: api/account/register
         public async Task<ActionResult<UserDTO>> Register(RegisterDTO registerDTO)
         {
-            if(await UserExistsOnNameAsync(registerDTO.UserName)) return BadRequest("User Name is exists.");
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+            if (await UserExistsOnNameAsync(registerDTO.UserName)) return BadRequest("User Name is exists.");
             if (await UserExistsOnEmail(registerDTO.Email)) return BadRequest("Email is exists.");
             if (await UserExistsOnPhoneNumber(registerDTO.MobileNumber)) return BadRequest("Phone Number is exists.");
 
