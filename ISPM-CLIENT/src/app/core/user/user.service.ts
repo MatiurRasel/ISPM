@@ -1,13 +1,13 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { User } from 'app/core/user/user.types';
+import { UserDTO, UserOutputDTO } from 'app/core/user/user.types';
 import { map, Observable, ReplaySubject, tap } from 'rxjs';
 
 @Injectable({providedIn: 'root'})
 export class UserService
 {
     private _httpClient = inject(HttpClient);
-    private _user: ReplaySubject<User> = new ReplaySubject<User>(1);
+    private _user: ReplaySubject<UserDTO> = new ReplaySubject<UserDTO>(1);
 
     // -----------------------------------------------------------------------------------------------------
     // @ Accessors
@@ -18,13 +18,13 @@ export class UserService
      *
      * @param value
      */
-    set user(value: User)
+    set user(value: UserDTO)
     {
         // Store the value
         this._user.next(value);
     }
 
-    get user$(): Observable<User>
+    get user$(): Observable<UserDTO>
     {
         return this._user.asObservable();
     }
@@ -36,12 +36,12 @@ export class UserService
     /**
      * Get the current signed-in user data
      */
-    get(): Observable<User>
+    get(): Observable<UserOutputDTO>
     {
-        return this._httpClient.get<User>('api/common/user').pipe(
-            tap((user) =>
+        return this._httpClient.get<UserOutputDTO>('api/common/user').pipe(
+            tap((userOutput) =>
             {
-                this._user.next(user);
+                this._user.next(userOutput.user);
             }),
         );
     }
@@ -51,12 +51,13 @@ export class UserService
      *
      * @param user
      */
-    update(user: User): Observable<any>
+    update(user: UserDTO): Observable<UserOutputDTO>
     {
-        return this._httpClient.patch<User>('api/common/user', {user}).pipe(
+        return this._httpClient.patch<UserOutputDTO>('api/common/user', {user}).pipe(
             map((response) =>
             {
-                this._user.next(response);
+                this._user.next(response.user);
+                return response;
             }),
         );
     }

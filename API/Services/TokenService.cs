@@ -16,7 +16,13 @@ namespace API.Services
         public TokenService(IConfiguration config,UserManager<User> userManager)
         {
             _userManager = userManager;
-            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["TokenKey"]));
+
+            // Retrieve token key from configuration
+            var tokenKey = config["TokenKey"];
+
+            // Ensure the key is properly encoded to bytes
+            _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(tokenKey));
+            //_key = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(config["TokenKey"]));
         }
 
         public async Task<string> CreateToken(User user)
@@ -24,7 +30,9 @@ namespace API.Services
            var claims = new List<Claim>()
            {
               new Claim(JwtRegisteredClaimNames.NameId,user.Id.ToString()),
-              new Claim(JwtRegisteredClaimNames.UniqueName,user.UserName)
+              new Claim(JwtRegisteredClaimNames.UniqueName,user.UserName),
+              new Claim(JwtRegisteredClaimNames.Email,user.Email),
+              new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()) // Example additional claim (JWT ID)
            };
 
            var roles =  await _userManager.GetRolesAsync(user);

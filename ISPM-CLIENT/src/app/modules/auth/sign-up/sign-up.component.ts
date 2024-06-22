@@ -334,39 +334,71 @@ export class AuthSignUpComponent implements OnInit
         //this._authService.register(values).subscribe();
         debugger
         this._authService.signUp(this.signUpForm.value)
-            .subscribe(
-                (response) =>
-                {
-                    // Navigate to the confirmation required page
-                    this._router.navigateByUrl('/signed-in-redirect');
-                },
-                (response) =>
-                {
-                    // Re-enable the form
-                    this.signUpForm.enable();
+        .subscribe(
+          (response) => {
+            console.log('Sign Up Response:', response);
+            // Navigate to the confirmation required page
+            this._router.navigateByUrl('/signed-in-redirect');
+          },
+        (error) => {
+            // Error scenario
+            console.error('Error:', error);
 
-                     // Reset the form with default values
-                    this.signUpNgForm.resetForm({
-                      gender: 'M',
-                      fullName: '',
-                      userName: '',
-                      email: '',
-                      password: '',
-                      confirmPassword: '',
-                      dateOfBirth: '',
-                      mobileNumber: '',
+            if (error.error && error.error.errors) {
+                // Handle specific field errors from ModelState
+                Object.keys(error.error.errors).forEach(key => {
+                  const formControl = this.signUpForm.get(key);
+                  if (formControl) {
+                    formControl.setErrors({
+                      serverError: error.error.errors[key]
                     });
+                  }
+                });
 
-                    // Set the alert
-                    this.alert = {
-                        type   : 'error',
-                        message: 'Something went wrong, please try again.',
-                    };
+                 // Display the first field-specific error message
+                 const firstErrorKey = Object.keys(error.error.errors)[0];
+                 const firstErrorMessage = error.error.errors[firstErrorKey];
+                 
+                 this.alert = {
+                     type: 'error',
+                     message: firstErrorMessage
+                 };
+              } else {
+                // Handle generic error messages
+                this.alert = {
+                  type: 'error',
+                  message: 'Something went wrong, please try again.'
+                };
+              }
+              
+              this.showAlert = true;
 
-                    // Show the alert
-                    this.showAlert = true;
-                },
-            );
+            // Re-enable the form
+            this.signUpForm.enable();
+
+            // Reset the form with default values
+            // this.signUpNgForm.resetForm({
+            //     gender: 'M',
+            //     fullName: '',
+            //     userName: '',
+            //     email: '',
+            //     password: '',
+            //     confirmPassword: '',
+            //     dateOfBirth: '',
+            //     mobileNumber: '',
+            // });
+
+            // Set the alert
+            // this.alert = {
+            //     type: 'error',
+            //     message: 'Something went wrong, please try again.',
+            // };
+
+            // Show the alert
+            //this.showAlert = true;
+        }
+    );
+
     }
 
     private getDateOnly(dob: string | undefined) {

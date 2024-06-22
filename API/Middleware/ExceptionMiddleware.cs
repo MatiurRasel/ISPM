@@ -1,175 +1,114 @@
+using System.ComponentModel.DataAnnotations;
 using System.Net;
 using System.Text.Json;
 using API.Errors;
 using API.Helpers;
+using Microsoft.EntityFrameworkCore;
 
-namespace API.Middleware
+namespace API.Middleware;
+
+public class ExceptionMiddleware
 {
-    public class ExceptionMiddleware
+    private readonly RequestDelegate _next;
+    private readonly ILogger<ExceptionMiddleware> _logger;
+    private readonly IHostEnvironment _env;
+
+    public ExceptionMiddleware(RequestDelegate next,
+                               ILogger<ExceptionMiddleware> logger,
+                               IHostEnvironment env)
     {
-        readonly RequestDelegate _next;
-        readonly ILogger<ExceptionMiddleware> _logger;
-        readonly IHostEnvironment _env;
+        _next = next;
+        _logger = logger;
+        _env = env;
+    }
 
-        public ExceptionMiddleware(RequestDelegate next,
-       ILogger<ExceptionMiddleware> logger,
-       IHostEnvironment env)
+    public async Task InvokeAsync(HttpContext context)
+    {
+        try
         {
-            _next = next;
-            _logger = logger;
-            _env = env;
+            // Log request details
+            _logger.LogInformation($"Handling request: {context.Request.Method} {context.Request.Path}");
+
+            await _next(context);
+
+            // Log response details
+            _logger.LogInformation($"Response status code: {context.Response.StatusCode}");
+        }
+        catch (Exception ex)
+        {
+            await HandleExceptionAsync(context, ex);
+        }
+    }
+
+    private async Task HandleExceptionAsync(HttpContext context, Exception ex)
+    {
+        _logger.LogError(ex, ex.Message);
+
+        string logsFolderPath = "Logs";
+        string errorLogFilePath = Path.Combine(logsFolderPath, "ErrorLogs.txt");
+
+        if (!Directory.Exists(logsFolderPath))
+        {
+            Directory.CreateDirectory(logsFolderPath);
         }
 
-        public async Task InvokeAsync(HttpContext context)
+        string timestampFormat = "dd-MM-yyyy HH:mm:ss";
+        using (StreamWriter writer = File.AppendText(errorLogFilePath))
         {
-            try
+            writer.WriteLine("--------------------------------------------------");
+            writer.WriteLine($"Timestamp (UTC): {DateTime.UtcNow.ToString(timestampFormat)}");
+            writer.WriteLine($"Timestamp (Local): {DateTime.Now.ToString(timestampFormat)}");
+            writer.WriteLine("--------------------------------------------------");
+            writer.WriteLine($"Exception Type: {ex.GetType().Name}");
+            writer.WriteLine($"Message: {ex.Message}");
+            writer.WriteLine("Stack Trace:");
+            writer.WriteLine(ex.StackTrace);
+            if (ex.InnerException != null)
             {
-                // // Your middleware logic for login
-                // string username = context.Request.Form["userName"];
-                // string password = context.Request.Form["password"];
-
-                // // Simulate an invalid login for testing purposes
-                // if (username != "validUsername" || password != "validPassword")
-                // {
-                //     throw new Exception("Invalid login credentials.");
-                // }
-
-                // Continue with the next middleware or request processing
-
-                await _next(context);
+                writer.WriteLine("--------------------------------------------------");
+                writer.WriteLine("Inner Exception:");
+                writer.WriteLine($"Exception Type: {ex.InnerException.GetType().Name}");
+                writer.WriteLine($"Message: {ex.InnerException.Message}");
+                writer.WriteLine("Stack Trace:");
+                writer.WriteLine(ex.InnerException.StackTrace);
             }
-            catch (Exception ex)
-            {
-                await HandleExceptionAsync(context, ex);
-            }
-            //catch (Exception ex)
-            //{
-            //    // Log the error to the console and a log file
-            //    _logger.LogError(ex, ex.Message);
-
-            //    // Specify the path for the error log file within the "Logs" folder
-            //    string logsFolderPath = "Logs";
-            //    string errorLogFilePath = Path.Combine(logsFolderPath, "ErrorLogs.txt");
-
-            //    // Ensure the "Logs" folder exists
-            //    if (!Directory.Exists(logsFolderPath))
-            //    {
-            //        Directory.CreateDirectory(logsFolderPath);
-            //    }
-
-            //    // Write the full error details to the error log file
-            //    using (StreamWriter writer = File.AppendText(errorLogFilePath))
-            //    {
-            //        writer.WriteLine("--------------------------------------------------");
-            //        writer.WriteLine($"Timestamp: {DateTime.UtcNow}");
-            //        writer.WriteLine("--------------------------------------------------");
-            //        writer.WriteLine(ExceptionHelper.GetExceptionDetails(ex));
-            //        writer.WriteLine("--------------------------------------------------");
-            //    }
-
-            //    // Prepare a summarized response
-            //    context.Response.ContentType = "application/json";
-            //    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-            //    var summaryMessage = ExceptionHelper.GetExceptionSummary(ex);
-            //    var response = _env.IsDevelopment()
-            //        ? new ApiException(context.Response.StatusCode, summaryMessage, null)
-            //        : new ApiException(context.Response.StatusCode, "An unexpected error occurred. Please try again later.", null);
-
-            //    var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-            //    var json = JsonSerializer.Serialize(response, options);
-
-            //    await context.Response.WriteAsync(json);
-            //}
-
-
-
-            //Previous working but error message is too long with stacktrace
-            //catch (Exception ex)
-            //{
-            //    // Log the error to the console and a log file
-            //    _logger.LogError(ex, ex.Message);
-
-            //    // Specify the path for the error log file within the "Logs" folder
-            //    string logsFolderPath = "Logs";
-            //    string errorLogFilePath = Path.Combine(logsFolderPath, "ErrorLogs.txt");
-
-            //    // Check if the "Logs" folder exists, and create it if not
-            //    if (!Directory.Exists(logsFolderPath))
-            //    {
-            //        Directory.CreateDirectory(logsFolderPath);
-            //    }
-
-            //    // Check if the error log file exists, and create it if not
-            //    if (!File.Exists(errorLogFilePath))
-            //    {
-            //        using (StreamWriter createFileWriter = File.CreateText(errorLogFilePath))
-            //        {
-            //            // Add any initial information to the file if needed
-            //            createFileWriter.WriteLine("Error Log File Created");
-            //            createFileWriter.WriteLine();
-            //        }
-            //    }
-
-            //    // Write the error details to the error log file
-
-            //    using (StreamWriter writer = File.AppendText(errorLogFilePath))
-            //    {
-            //        writer.WriteLine($"Timestamp: {DateTime.UtcNow}");
-            //        writer.WriteLine($"Message: {ex.Message}");
-            //        writer.WriteLine($"StackTrace: {ex.StackTrace}");
-            //        writer.WriteLine();
-            //    }
-
-
-            //    context.Response.ContentType = "application/json";
-            //    context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-            //    var response = _env.IsDevelopment()
-            //    ? new ApiException(context.Response.StatusCode, ex.Message, ex.StackTrace?.ToString())
-            //    : new ApiException(context.Response.StatusCode, ex.Message, "Internal Server Error");
-
-            //    var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-
-            //    var json = JsonSerializer.Serialize(response, options);
-
-            //    await context.Response.WriteAsync(json);
-            //}
+            writer.WriteLine("--------------------------------------------------");
         }
 
-        private async Task HandleExceptionAsync(HttpContext context, Exception ex)
+        context.Response.ContentType = "application/json";
+
+        var responseMessage = "An unexpected error occurred. Please try again later.";
+        var responseDetails = _env.IsDevelopment() ? ex.Message : null;
+
+        if (ex is ValidationException validationException)
         {
-            _logger.LogError(ex, ex.Message);
-
-            string logsFolderPath = "Logs";
-            string errorLogFilePath = Path.Combine(logsFolderPath, "ErrorLogs.txt");
-
-            if (!Directory.Exists(logsFolderPath))
-            {
-                Directory.CreateDirectory(logsFolderPath);
-            }
-
-            using (StreamWriter writer = File.AppendText(errorLogFilePath))
-            {
-                writer.WriteLine("--------------------------------------------------");
-                writer.WriteLine($"Timestamp: {DateTime.UtcNow}");
-                writer.WriteLine("--------------------------------------------------");
-                writer.WriteLine(ExceptionHelper.GetExceptionDetails(ex));
-                writer.WriteLine("--------------------------------------------------");
-            }
-
-            context.Response.ContentType = "application/json";
+            context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            responseMessage = validationException.Message;
+            responseDetails = "Validation Error";
+        }
+        else if (ex is DbUpdateException dbUpdateException)
+        {
             context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
-
-            var summaryMessage = ExceptionHelper.GetExceptionSummary(ex);
-            var response = _env.IsDevelopment()
-                ? new ApiException(context.Response.StatusCode, summaryMessage, null)
-                : new ApiException(context.Response.StatusCode, "An unexpected error occurred. Please try again later.", null);
-
-            var options = new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
-            var json = JsonSerializer.Serialize(response, options);
-
-            await context.Response.WriteAsync(json);
+            responseMessage = "Database update failed.";
+            responseDetails = dbUpdateException.Message;
         }
+        else if (ex is NotFoundException notFoundException)
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.NotFound;
+            responseMessage = notFoundException.Message;
+            responseDetails = "Resource Not Found";
+        }
+        else
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+        }
+
+        var response = _env.IsDevelopment()
+                   ? new ApiException(context.Response.StatusCode, responseMessage, ex.StackTrace?.ToString())
+                   : new ApiException(context.Response.StatusCode, responseMessage);
+
+        var json = JsonSerializer.Serialize(response);
+
+        await context.Response.WriteAsync(json);
     }
 }

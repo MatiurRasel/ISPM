@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { AuthUtils } from 'app/core/auth/auth.utils';
 import { UserService } from 'app/core/user/user.service';
 import { catchError, Observable, of, switchMap, throwError } from 'rxjs';
-import { User } from '../user/user.types';
+import {  UserOutputDTO } from '../user/user.types';
 import { environment } from 'environments/environment';
 
 @Injectable({providedIn: 'root'})
@@ -67,8 +67,8 @@ export class AuthService
             return throwError('User is already logged in.');
         }
         debugger
-        return this._httpClient.post<User>(this.baseUrl + 'account/login', model).pipe(
-            switchMap((response: any) =>
+        return this._httpClient.post<UserOutputDTO>(this.baseUrl + 'account/login', model).pipe(
+            switchMap((response: UserOutputDTO) =>
             {
                 console.log(response)
                 // Store the access token in the local storage
@@ -92,7 +92,7 @@ export class AuthService
     signInUsingToken(): Observable<any>
     {
         // Sign in using the token
-        return this._httpClient.post('api/auth/sign-in-with-token', {
+        return this._httpClient.post<UserOutputDTO>(this.baseUrl + 'account/sign-in-with-token', {
             accessToken: this.accessToken,
         }).pipe(
             catchError(() =>
@@ -100,7 +100,7 @@ export class AuthService
                 // Return false
                 of(false),
             ),
-            switchMap((response: any) =>
+            switchMap((response: UserOutputDTO) =>
             {
                 // Replace the access token with the new one if it's available on
                 // the response object.
@@ -109,9 +109,9 @@ export class AuthService
                 // in using the token, you should generate a new one on the server
                 // side and attach it to the response object. Then the following
                 // piece of code can replace the token with the refreshed one.
-                if ( response.accessToken )
+                if ( response.token )
                 {
-                    this.accessToken = response.accessToken;
+                    this.accessToken = response.token;
                 }
 
                 // Set the authenticated flag to true
@@ -146,16 +146,18 @@ export class AuthService
      *
      * @param user
      */
-    signUp(user: { gender: string; fullName: string,userName: string, email: string; password: string;mobileNumber: string }): Observable<any>
-    {
-        debugger
+    signUp(user: {
+          gender: string;
+          fullName: string;
+          userName: string;
+          email: string;
+          password: string;
+          mobileNumber: string;
+        }): Observable<any> {
         return this._httpClient.post(this.baseUrl + 'account/register', user);
-    }
-    register(model: any) {
-        debugger
-        return this._httpClient.post<User>(this.baseUrl + 'account/register',model);
-           
-    }
+      }
+
+    
 
     /**
      * Unlock session
@@ -164,7 +166,7 @@ export class AuthService
      */
     unlockSession(credentials: { email: string; password: string }): Observable<any>
     {
-        return this._httpClient.post('api/auth/unlock-session', credentials);
+        return this._httpClient.post<any>(this.baseUrl + 'account/unlock-session', credentials);
     }
 
     /**

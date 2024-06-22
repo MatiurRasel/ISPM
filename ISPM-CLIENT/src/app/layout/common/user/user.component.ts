@@ -7,7 +7,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { Router } from '@angular/router';
 import { UserService } from 'app/core/user/user.service';
-import { User } from 'app/core/user/user.types';
+import { UserDTO } from 'app/core/user/user.types';
 import { Subject, takeUntil } from 'rxjs';
 
 @Component({
@@ -26,7 +26,7 @@ export class UserComponent implements OnInit, OnDestroy
     /* eslint-enable @typescript-eslint/naming-convention */
 
     @Input() showAvatar: boolean = true;
-    user: User;
+    user: UserDTO ;
 
     private _unsubscribeAll: Subject<any> = new Subject<any>();
 
@@ -53,7 +53,7 @@ export class UserComponent implements OnInit, OnDestroy
         // Subscribe to user changes
         this._userService.user$
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe((user: User) =>
+            .subscribe((user: UserDTO ) =>
             {
                 this.user = user;
 
@@ -92,7 +92,7 @@ export class UserComponent implements OnInit, OnDestroy
         // Update the user
         this._userService.update({
             ...this.user,
-            status,
+            //status,
         }).subscribe();
     }
 

@@ -13,6 +13,13 @@ namespace API.Data
         {
 
         }
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.EnableSensitiveDataLogging(); // Enable sensitive data logging
+            }
+        }
         //public DbSet<CountryInfo> CountryInfos {get; set;}
         protected override void OnModelCreating(ModelBuilder builder)
         {
